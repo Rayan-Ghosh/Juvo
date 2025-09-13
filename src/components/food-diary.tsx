@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -14,9 +15,10 @@ import type { UserProfile } from '@/services/profile';
 interface FoodDiaryProps {
     todaysMood: MoodLog | null;
     profile: Partial<UserProfile> | null;
+    dayOfCycle?: number;
 }
 
-const FoodDiary = ({ todaysMood, profile }: FoodDiaryProps) => {
+const FoodDiary = ({ todaysMood, profile, dayOfCycle }: FoodDiaryProps) => {
     const { toast } = useToast();
     const [foodInput, setFoodInput] = useState('');
     const [analysis, setAnalysis] = useState('');
@@ -52,6 +54,7 @@ const FoodDiary = ({ todaysMood, profile }: FoodDiaryProps) => {
                 foodDiary: foodInput,
                 mood: todaysMood.moodName,
                 bmiCategory,
+                dayOfCycle,
             });
             setAnalysis(result.analysis);
         } catch (error) {
@@ -66,7 +69,7 @@ const FoodDiary = ({ todaysMood, profile }: FoodDiaryProps) => {
         <Card>
             <CardHeader>
                 <CardTitle>Food & Mood Diary</CardTitle>
-                <CardDescription>Log your meals and let AI find connections to your mood.</CardDescription>
+                <CardDescription>Log your meals and let AI find connections to your mood and cycle.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <Textarea
