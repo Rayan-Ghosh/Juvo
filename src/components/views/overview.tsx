@@ -21,6 +21,8 @@ import SleepTracker from '../sleep-tracker';
 import HydrationTracker from '../hydration-tracker';
 import BMIDisplay from '../bmi-display';
 import type { View } from '../dashboard';
+import { getLatestCycleLog } from '@/services/cycle';
+import { differenceInDays } from 'date-fns';
 
 
 const moodColors: { [key: number]: string } = { 1: 'hsl(var(--chart-5))', 2: 'hsl(var(--chart-4))', 3: 'hsl(var(--chart-3))', 4: 'hsl(var(--chart-2))', 5: 'hsl(var(--chart-1))', 0: 'hsl(var(--muted))' };
@@ -41,6 +43,7 @@ const Overview = ({ setActiveView }: OverviewProps) => {
     const [moodHistory, setMoodHistory] = useState<MoodEntry[]>([]);
     const [todaysMood, setTodaysMood] = useState<MoodLog | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [dayOfCycle, setDayOfCycle] = useState<number | undefined>(undefined);
     const [isDataLoading, setIsDataLoading] = useState(true);
     const [loggingMood, setLoggingMood] = useState<string | null>(null);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -59,18 +62,23 @@ const Overview = ({ setActiveView }: OverviewProps) => {
             setMoodHistory(emptyData);
             setTodaysMood(null);
             setProfile(null);
+            setDayOfCycle(undefined);
         } else {
             // Update last seen timestamp on dashboard load
             await updateUserLastSeen();
             
-            const [weeklyData, todayData, userProfile] = await Promise.all([
+            const [weeklyData, todayData, userProfile, latestCycleLog] = await Promise.all([
                 getWeeklyMood(),
                 getTodaysMood(),
                 getProfile(),
+                getLatestCycleLog(),
             ]);
             setMoodHistory(weeklyData);
             setTodaysMood(todayData);
             setProfile(userProfile);
+            if (latestCycleLog) {
+                setDayOfCycle(differenceInDays(new Date(), latestCycleLog.date) + 1);
+            }
         }
         setIsDataLoading(false);
     }, [user]);
@@ -205,7 +213,7 @@ const Overview = ({ setActiveView }: OverviewProps) => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <AnimatedDiv style={{ animationDelay: '600ms' }}>
-                    <FoodDiary todaysMood={todaysMood} profile={profile} />
+                    <FoodDiary todaysMood={todaysMood} profile={profile} dayOfCycle={dayOfCycle}/>
                 </AnimatedDiv>
                 <AnimatedDiv style={{ animationDelay: '700ms' }}>
                      <SleepTracker setActiveView={setActiveView} />
