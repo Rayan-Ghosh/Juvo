@@ -1,0 +1,25 @@
+@keyframes expand {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes shrink {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.5);
+  }
+}
+
+.expand {
+  animation: expand 4s ease-in-out forwards;
+}
+
+.shrink {
+  animation: shrink 4s ease-in-out forwards;
+}
