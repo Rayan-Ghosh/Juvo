@@ -1,0 +1,8 @@
+
+.time-picker-input-grid {
+  grid-template-areas:
+    'hour-label hour-label'
+    'hour-input ampm'
+    'minute-label minute-label'
+    'minute-input ampm';
+}
