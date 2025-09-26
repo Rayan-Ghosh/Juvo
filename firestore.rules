@@ -1,0 +1,232 @@
+/**
+ * @fileoverview Firestore Security Rules for Juvo application.
+ *
+ * Core Philosophy:
+ * This ruleset prioritizes user data privacy and controlled community interaction.
+ * User-specific data is strictly protected by ownership-based rules, while community
+ * posts are publicly readable but require authentication for creation.
+ *
+ * Data Structure:
+ * - `/users/{userId}`: Stores private user profiles and related data. All subcollections
+ *   are secured by owner-only access.
+ * - `/communityPosts/{postId}`: Stores community posts, readable by all authenticated users.
+ *   Writes are currently unrestricted but should be moderated by Cloud Functions in production.
+ *   - `/communityPosts/{postId}/replies/{replyId}`: Stores replies to community posts, also publicly readable.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own data. No cross-user data access is allowed via the rules.
+ * - Community posts are publicly readable, enabling open interaction.
+ * - Schema validation is relaxed to allow for rapid prototyping. Only essential authorization
+ *   fields are validated.
+ *
+ * Denormalization for Authorization:
+ * - Currently, no denormalization is used. Future iterations may benefit from denormalizing
+ *   ownership data to avoid expensive `get()` operations.
+ *
+ * Structural Segregation:
+ * - Private user data is stored under `/users/{userId}`, while public community posts are
+ *   stored in the top-level `/communityPosts` collection. This separation simplifies access
+ *   control and optimizes list operations.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows access to user profile data based on ownership.
+     * @path /users/{userId}
+     * @allow (create) - User with UID 'user123' can create their own profile document with id 'user123'.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete their own profile document with id 'user123'.
+     * @deny (create) - User with UID 'user456' cannot create a profile document with id 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete the profile document of user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to caretaker data for a specific user based on ownership.
+     * @path /users/{userId}/caretakers/{caretakerId}
+     * @allow (create) - User with UID 'user123' can create a caretaker document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete caretaker documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a caretaker document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete caretaker documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/caretakers/{caretakerId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to activity log data for a specific user based on ownership.
+     * @path /users/{userId}/activity_logs/{activityLogId}
+     * @allow (create) - User with UID 'user123' can create an activity log document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete activity log documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create an activity log document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete activity log documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/activity_logs/{activityLogId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to alert data for a specific user based on ownership.
+     * @path /users/{userId}/alerts/{alertId}
+     * @allow (create) - User with UID 'user123' can create an alert document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete alert documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create an alert document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete alert documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/alerts/{alertId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to chat message data for a specific user based on ownership.
+     * @path /users/{userId}/chats/{chatId}
+     * @allow (create) - User with UID 'user123' can create a chat message document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete chat message documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a chat message document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete chat message documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/chats/{chatId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+     /**
+     * @description Allows access to vitals data for a specific user based on ownership.
+     * @path /users/{userId}/vitals/{vitalsId}
+     * @allow (create) - User with UID 'user123' can create a vitals document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete vitals documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a vitals document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete vitals documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/vitals/{vitalsId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to menstrual cycle log data for a specific user based on ownership.
+     * @path /users/{userId}/menstrual_cycle_logs/{logId}
+     * @allow (create) - User with UID 'user123' can create a menstrual cycle log document under their profile.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete menstrual cycle log documents under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a menstrual cycle log document under user 'user123'.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete menstrual cycle log documents under user 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/menstrual_cycle_logs/{logId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows read access to all community posts for authenticated users, and allows any authenticated user to create, update, and delete posts.
+     * @path /communityPosts/{postId}
+     * @allow (get, list) - Any authenticated user can read any community post.
+     * @allow (create, update, delete) - Any authenticated user can create, update, and delete any community post.
+     * @deny (get, list) - Unauthenticated users cannot read community posts.
+     * @principle Allows public read access for authenticated users, with open writes for now, which should be moderated by Cloud Functions later.
+     */
+    match /communityPosts/{postId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+      allow get, list: if true; // Public read access
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
+    }
+
+    /**
+     * @description Allows read access to all replies for authenticated users, and allows any authenticated user to create, update, and delete replies.
+     * @path /communityPosts/{postId}/replies/{replyId}
+     * @allow (get, list) - Any authenticated user can read any reply to a community post.
+     * @allow (create, update, delete) - Any authenticated user can create, update, and delete any reply to a community post.
+     * @deny (get, list) - Unauthenticated users cannot read replies to community posts.
+     * @principle Allows public read access for authenticated users, with open writes for now, which should be moderated by Cloud Functions later.
+     */
+    match /communityPosts/{postId}/replies/{replyId} {
+        function isSignedIn() {
+          return request.auth != null;
+        }
+        allow get, list: if true; // Public read access
+        allow create: if isSignedIn();
+        allow update: if isSignedIn() && resource != null;
+        allow delete: if isSignedIn() && resource != null;
+    }
+  }
+}

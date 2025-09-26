@@ -1,0 +1,119 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 204 10% 98%;
+    --foreground: 224 25% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 25% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 25% 25%;
+    --primary: 200 82% 42%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 228 94% 97%;
+    --secondary-foreground: 224 25% 25%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 227 96% 94%;
+    --accent-foreground: 224 25% 25%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+    --radius: 0.8rem;
+    --chart-1: 142.1 76.2% 36.3%; /* Green */
+    --chart-2: 43.6 95.8% 50.8%; /* Yellow-Green */
+    --chart-3: 60 92.9% 48.8%; /* Yellow */
+    --chart-4: 25.9 91.4% 54.3%; /* Orange */
+    --chart-5: 0 84.2% 60.2%; /* Red */
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 200 82% 52%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 228 94% 27%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 227 96% 24%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217 91% 60%;
+    --chart-1: 142.1 70.6% 45.3%;
+    --chart-2: 43.6 92.8% 55.8%;
+    --chart-3: 60 90.9% 53.8%;
+    --chart-4: 25.9 88.4% 59.3%;
+    --chart-5: 0 72.2% 50.6%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+@layer utilities {
+    .bg-gradient-pastel {
+        @apply bg-gradient-to-br from-mint via-sky-blue to-peach;
+    }
+
+    .animated-gradient-background {
+        background-size: 200% 200%;
+        animation: gradient-animation 15s ease infinite;
+    }
+
+    @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float-animation {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    
+    .float {
+        animation: float-animation 6s ease-in-out infinite;
+    }
+
+    @keyframes inhale {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.2); }
+    }
+    @keyframes exhale {
+        0% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    .animate-inhale {
+        animation: inhale 4s ease-in-out forwards;
+    }
+    .animate-hold {
+        animation: none; /* Or specify a holding state if needed */
+        transform: scale(1.2);
+    }
+    .animate-exhale {
+        animation: exhale 8s ease-in-out forwards;
+    }
+}

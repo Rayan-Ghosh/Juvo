@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user-avatar",
+      "description": "An abstract, colorful avatar for the user.",
+      "imageUrl": "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "person smiling"
+    },
+    {
+      "id": "ai-avatar",
+      "description": "A minimal, abstract shape representing the AI companion.",
+      "imageUrl": "https://images.unsplash.com/photo-1698848436739-16a135a42848?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "abstract gradient"
+    },
+    {
+      "id": "hero",
+      "description": "A serene mountain landscape representing inner calm.",
+      "imageUrl": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "mountain landscape"
+    }
+  ]
+}
