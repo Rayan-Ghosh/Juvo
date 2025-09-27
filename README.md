@@ -1,8 +1,7 @@
 # Juvo - Your AI Mental Wellness Companion
 
 Juvo is a comprehensive web application designed to be a personal AI companion for mental and physical wellness. It offers a suite of tools to help users track their health, understand their emotional patterns, and receive supportive, AI-driven feedback.
-
-![Juvo Dashboard](./assets/screenshot.png) <!-- Replace with an actual screenshot URL -->
+<!-- Replace with an actual screenshot URL -->
 
 ## ✨ Features
 
